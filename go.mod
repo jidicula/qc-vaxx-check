@@ -1,3 +1,3 @@
-module github.com/jidicula/template-go
+module github.com/jidicula/qc-vaxx-check
 
 go 1.16
