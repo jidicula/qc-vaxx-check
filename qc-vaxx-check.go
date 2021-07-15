@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"os"
+)
 
 var usage = `Usage: qc-vaxx-check [options...] <qr_code file>
 
@@ -17,7 +21,27 @@ Example:
 `
 
 func main() {
-	fmt.Println("Hello, world!")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "%s\n", usage)
+	}
+	flag.Parse()
+	if flag.NArg() < 1 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	filepath := flag.Arg(0)
+	file, err := os.Open(filepath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(2)
+	}
+	defer fi.Close()
+	qrmatrix, err := qrcode.Decode(fi)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		os.Exit(3)
+	}
 	// TODO: take filepath arg to QR code image
 	// TODO: Decode QR
 	// TODO: Check signature
