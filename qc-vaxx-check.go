@@ -10,6 +10,7 @@ import (
 	"image"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -99,6 +100,8 @@ func main() {
 		os.Exit(40)
 	}
 	fmt.Printf("%s\n", shc)
+	shc = PatientFamilyNameWorkaround(shc)
+	fmt.Printf("%s\n", shc)
 	var v VerificationBody
 	if err := json.Unmarshal(shc, &v); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -148,4 +151,27 @@ type VerificationBody struct {
 			} `json:"fhirBundle"`
 		} `json:"credentialSubject"`
 	} `json:"vc"`
+}
+
+// PatientFamilyNameWorkaround replaces the string array for name.family in older versions of the FHIR Patient payload.
+func PatientFamilyNameWorkaround(data []byte) []byte {
+	var re = regexp.MustCompile(`(?m)"family":\[.*\],`)
+	familyNameStringArray := re.Find(data)
+	if string(familyNameStringArray) == "" {
+		return data
+	}
+	// Handle empty family name scenario
+	var reEmptyName = regexp.MustCompile(`(?m)"family":\[\],`)
+	data = reEmptyName.ReplaceAll(data, []byte(`"family":"",`))
+
+	// join quotes and commas for multiple family names
+	var reQuotesComma = regexp.MustCompile(`","`)
+	familyNameString := reQuotesComma.ReplaceAll(familyNameStringArray, []byte(" "))
+
+	// remove brackets
+	familyNameString = bytes.Replace(familyNameString, []byte("["), []byte(""), 1)
+	familyNameString = bytes.Replace(familyNameString, []byte("]"), []byte(""), 1)
+
+	cleanedData := bytes.Replace(data, familyNameStringArray, familyNameString, 1)
+	return cleanedData
 }
