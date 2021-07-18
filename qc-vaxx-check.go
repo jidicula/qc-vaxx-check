@@ -107,8 +107,6 @@ func main() {
 	}
 	fmt.Printf("%v\n", v)
 
-	// TODO: take filepath arg to QR code image
-	// TODO: Decode QR
 	// TODO: Check signature
 	// TODO: Get dose count
 	// TODO: Output verification validity
