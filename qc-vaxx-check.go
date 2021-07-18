@@ -99,7 +99,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(40)
 	}
-	fmt.Printf("%s\n", shc)
 	shc = PatientFamilyNameWorkaround(shc)
 	fmt.Printf("%s\n", shc)
 	var v VerificationBody
