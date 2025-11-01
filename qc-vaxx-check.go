@@ -67,7 +67,8 @@ func main() {
 	shcJWS := []byte{}
 	for i := 5; i < len(qrBody); i += 2 {
 		pair := qrBody[i : i+2]
-		j, err := strconv.Atoi(pair)
+		var j int
+		j, err = strconv.Atoi(pair)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
@@ -80,7 +81,8 @@ func main() {
 	// Decode portions of JWS
 	jwsParts := [][]byte{}
 	for _, s := range strings.Split(string(shcJWS), ".") {
-		portion, err := decode([]byte(s))
+		var portion []byte
+		portion, err = decode([]byte(s))
 		if err != nil {
 			fmt.Fprintln(os.Stderr, s)
 			fmt.Fprintln(os.Stderr, err)
