@@ -8,7 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -96,7 +96,7 @@ func main() {
 	b := bytes.NewReader(jwsParts[1])
 	z := flate.NewReader(b)
 	defer z.Close()
-	shc, err := ioutil.ReadAll(z)
+	shc, err := io.ReadAll(z)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(40)
